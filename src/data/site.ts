@@ -46,13 +46,14 @@ export const experience = [
 export const cases = [
   {
     year: '2026',
-    title: 'Baseout',
+    title: 'Basewell',
     tagline: 'Backups, restores and history for Airtable',
-    text: '200+ screens and a 122-component design system — designed and shipped in Astro, React and Tailwind by me, not handed off.',
-    video: '/previews/baseout.mp4',
-    poster: '/previews/baseout.jpg',
+    text: 'A reimagined concept of my work on Baseout: 200+ screens and a 122-component design system I designed and shipped in Astro, React and Tailwind. Names and data here are fictional.',
+    video: '/previews/basewell.mp4',
+    poster: '/previews/basewell.jpg',
     tint: '#8fb8ad', // sage teal
-    frame: 'full' as const, // real Baseout UI: protect + inspect demos from the product site
+    frame: 'full' as const, // concept UI from portfolio-demos/basewell (Remotion), not the client product
+    aspect: '3 / 2',
   },
   {
     year: '2025',
