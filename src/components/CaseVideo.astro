@@ -9,9 +9,10 @@ interface Props {
   // 'window': our Remotion renders (app window at 64px inset), cropped to the window.
   // 'full': the video is the UI edge to edge (16:10), shown as is.
   frame?: 'window' | 'full';
+  aspect?: string; // 'full' videos only; defaults to 16 / 10
 }
 
-const { src, poster, label, tint = '#8fb8ad', frame = 'window' } = Astro.props;
+const { src, poster, label, tint = '#8fb8ad', frame = 'window', aspect = '16 / 10' } = Astro.props;
 
 // The rendered videos (1600×1000) hold the app window at 64px inset (1472×872).
 const win = { w: 1472, h: 872, inset: 64, full: 1600 };
@@ -23,7 +24,7 @@ const crop =
         left: `${(-win.inset / win.w) * 100}%`,
         top: `${(-win.inset / win.h) * 100}%`,
       }
-    : { aspect: '16 / 10', width: '100%', left: '0', top: '0' };
+    : { aspect, width: '100%', left: '0', top: '0' };
 ---
 
 <case-player class="backdrop relative block overflow-hidden rounded-xl p-5 sm:p-14" style={`--tint:${tint}`}>

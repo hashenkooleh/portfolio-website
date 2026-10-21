@@ -72,7 +72,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
               <span class="text-fg">{c.title}</span>
               <span class="text-muted"> · {c.tagline}</span>
             </p>
-            <CaseVideo src={c.video} poster={c.poster} tint={c.tint} frame={c.frame} label={`${c.title} — ${c.tagline}`} />
+            <CaseVideo src={c.video} poster={c.poster} tint={c.tint} frame={c.frame} aspect={c.aspect} label={`${c.title} — ${c.tagline}`} />
             <p class="mt-4 text-muted">{c.text}</p>
           </article>
         ))

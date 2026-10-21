@@ -62,6 +62,8 @@ export const cases = [
     video: '/previews/bridj.mp4',
     poster: '/previews/bridj.jpg',
     tint: '#9aa0e8', // periwinkle
+    frame: 'full' as const, // story video rendered from portfolio-demos/bridj (Remotion)
+    aspect: '3 / 2',
   },
   {
     year: '2025',
