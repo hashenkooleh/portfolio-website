@@ -1,5 +1,5 @@
 // Fetched once at build time. Uses GitHub GraphQL when GITHUB_TOKEN is set
-// (counts private contributions if enabled on the profile), otherwise a public mirror.
+// (counts private contributions if enabled on the profile), otherwise the public profile calendar.
 
 export type Day = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 };
 export type Activity = { total: number; weeks: Day[][] };
@@ -34,11 +34,27 @@ async function fromGraphQL(login: string, token: string): Promise<Activity> {
   };
 }
 
+// GitHub's own profile calendar (the HTML behind the green graph). Includes private
+// contributions when "Private contributions" is enabled on the profile.
 async function fromPublic(login: string): Promise<Activity> {
-  const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${login}?y=last`);
-  if (!res.ok) throw new Error(`contributions API ${res.status}`);
-  const data = await res.json();
-  const days: Day[] = data.contributions;
+  const res = await fetch(`https://github.com/users/${login}/contributions`);
+  if (!res.ok) throw new Error(`contributions page ${res.status}`);
+  const html = await res.text();
+
+  const counts = new Map<string, number>();
+  for (const [, id, text] of html.matchAll(/<tool-tip[^>]*\bfor="([^"]+)"[^>]*>([^<]*)<\/tool-tip>/g)) {
+    counts.set(id, Number.parseInt(text.replace(/,/g, ''), 10) || 0);
+  }
+
+  const days: Day[] = [];
+  for (const [tag] of html.matchAll(/<td[^>]*\bdata-date="[^"]+"[^>]*>/g)) {
+    const date = tag.match(/data-date="([^"]+)"/)![1];
+    const id = tag.match(/\bid="([^"]+)"/)?.[1] ?? '';
+    const level = Number(tag.match(/data-level="(\d)"/)?.[1] ?? 0) as Day['level'];
+    days.push({ date, level, count: counts.get(id) ?? 0 });
+  }
+  if (!days.length) throw new Error('contributions page: no days found');
+  days.sort((a, b) => a.date.localeCompare(b.date));
 
   // Group into Sunday-first weeks, matching GitHub's own calendar.
   const weeks: Day[][] = [];
@@ -51,7 +67,7 @@ async function fromPublic(login: string): Promise<Activity> {
     week.push(day);
   }
   if (week.length) weeks.push(week);
-  return { total: data.total.lastYear, weeks };
+  return { total: days.reduce((sum, d) => sum + d.count, 0), weeks };
 }
 
 export async function getActivity(login: string): Promise<Activity | null> {
