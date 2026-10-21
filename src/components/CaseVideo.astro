@@ -5,19 +5,24 @@ interface Props {
   poster?: string;
   label: string;
   tint?: string; // backdrop accent; keep it muted, the base stays near-black
+  // 'window': our Remotion renders (app window at 64px inset), cropped to the window.
+  // 'full': the video is the UI edge to edge (16:10), shown as is.
+  frame?: 'window' | 'full';
 }
 
-const { src, poster, label, tint = '#8fb8ad' } = Astro.props;
+const { src, poster, label, tint = '#8fb8ad', frame = 'window' } = Astro.props;
 
 // The rendered videos (1600×1000) hold the app window at 64px inset (1472×872).
-// Crop to the window so it sits directly on the backdrop.
 const win = { w: 1472, h: 872, inset: 64, full: 1600 };
-const crop = {
-  aspect: `${win.w} / ${win.h}`,
-  width: `${(win.full / win.w) * 100}%`,
-  left: `${(-win.inset / win.w) * 100}%`,
-  top: `${(-win.inset / win.h) * 100}%`,
-};
+const crop =
+  frame === 'window'
+    ? {
+        aspect: `${win.w} / ${win.h}`,
+        width: `${(win.full / win.w) * 100}%`,
+        left: `${(-win.inset / win.w) * 100}%`,
+        top: `${(-win.inset / win.h) * 100}%`,
+      }
+    : { aspect: '16 / 10', width: '100%', left: '0', top: '0' };
 ---
 
 <div class="backdrop relative overflow-hidden rounded-xl p-5 sm:p-14" style={`--tint:${tint}`}>

@@ -52,6 +52,7 @@ export const cases = [
     video: '/previews/baseout.mp4',
     poster: '/previews/baseout.jpg',
     tint: '#8fb8ad', // sage teal
+    frame: 'full' as const, // real Baseout UI: protect + inspect demos from the product site
   },
   {
     year: '2025',
