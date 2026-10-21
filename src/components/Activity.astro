@@ -20,7 +20,15 @@ const weeks = full ? full.weeks.filter((w) => w.at(-1)!.date >= start) : [];
 const inRange = (d: Day) => d.date >= start;
 const total = weeks.flat().filter(inRange).reduce((sum, d) => sum + d.count, 0);
 
-const shades = ['#161616', '#3a3a3a', '#6b6b6b', '#a8a8a8', '#ffffff'];
+// Cool sage-teal scale, same hue as the Baseout case backdrop.
+const tint = '#8fb8ad';
+const shades = [
+  '#151817',
+  `color-mix(in oklab, ${tint} 24%, #111)`,
+  `color-mix(in oklab, ${tint} 46%, #111)`,
+  `color-mix(in oklab, ${tint} 72%, #111)`,
+  `color-mix(in oklab, ${tint} 75%, white)`,
+];
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 // Label the week that holds the 1st of each month.
