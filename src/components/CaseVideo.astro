@@ -1,0 +1,83 @@
+---
+// Muted looping preview on a tinted backdrop. Plays only while on screen; falls back to the poster.
+interface Props {
+  src: string;
+  poster?: string;
+  label: string;
+  tint?: string; // backdrop accent; keep it muted, the base stays near-black
+}
+
+const { src, poster, label, tint = '#8fb8ad' } = Astro.props;
+
+// The rendered videos (1600×1000) hold the app window at 64px inset (1472×872).
+// Crop to the window so it sits directly on the backdrop.
+const win = { w: 1472, h: 872, inset: 64, full: 1600 };
+const crop = {
+  aspect: `${win.w} / ${win.h}`,
+  width: `${(win.full / win.w) * 100}%`,
+  left: `${(-win.inset / win.w) * 100}%`,
+  top: `${(-win.inset / win.h) * 100}%`,
+};
+---
+
+<div class="backdrop relative overflow-hidden rounded-xl p-5 sm:p-14" style={`--tint:${tint}`}>
+  <div
+    class="relative overflow-hidden rounded-[0.6rem] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)]"
+    style={`aspect-ratio:${crop.aspect}`}
+  >
+    <video
+      class="absolute max-w-none"
+      style={`width:${crop.width}; left:${crop.left}; top:${crop.top}`}
+      src={src}
+      poster={poster}
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      aria-label={label}
+      data-case-video
+    ></video>
+  </div>
+</div>
+
+<style>
+  /* Dark tinted base, a soft arc of light, film grain. */
+  .backdrop {
+    --base: #0b0c0d;
+    background:
+      /* soft arc of light, no hard rim */
+      radial-gradient(120% 150% at 112% 50%, transparent 45%, color-mix(in oklab, var(--tint) 32%, transparent) 64%, transparent 88%),
+      /* ambient wash so the whole card reads as one color */
+      radial-gradient(90% 120% at 0% 0%, color-mix(in oklab, var(--tint) 38%, var(--base)), transparent 70%),
+      radial-gradient(80% 100% at 100% 100%, color-mix(in oklab, var(--tint) 30%, var(--base)), transparent 70%),
+      color-mix(in oklab, var(--tint) 16%, var(--base));
+  }
+  .backdrop::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+</style>
+
+<script>
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const videos = document.querySelectorAll<HTMLVideoElement>('[data-case-video]');
+
+  if (!reduce) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const { target, isIntersecting } of entries) {
+          const video = target as HTMLVideoElement;
+          if (isIntersecting) video.play().catch(() => {});
+          else video.pause();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    videos.forEach((v) => io.observe(v));
+  }
+</script>

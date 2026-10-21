@@ -1,0 +1,8 @@
+{
+  // Static site: Cloudflare serves the built files from dist/, no Worker code.
+  "name": "portfolio",
+  "compatibility_date": "2026-10-20",
+  "assets": {
+    "directory": "./dist"
+  }
+}

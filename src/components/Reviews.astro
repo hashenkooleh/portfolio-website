@@ -1,0 +1,76 @@
+---
+// Masonry of quote cards. Each card rises in as it scrolls into view.
+interface Review {
+  quote: string;
+  author: string;
+  company: string;
+  source?: string;
+}
+
+interface Props {
+  items: Review[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="columns-1 gap-4 sm:columns-2">
+  {
+    items.map((r, i) => (
+      <figure
+        class="review mb-4 break-inside-avoid rounded-xl border border-line bg-[#0a0a0a] p-6 transition-colors duration-300 hover:border-outline"
+        style={`--d:${(i % 2) * 90}ms`}
+        data-review
+      >
+        <span class="mb-4 block text-2xl leading-none text-muted" aria-hidden="true">
+          “
+        </span>
+        <blockquote class="text-fg">{r.quote}</blockquote>
+        <figcaption class="mt-6 flex items-baseline justify-between gap-4 text-muted">
+          <span>
+            <span class="text-fg">{r.author}</span> · {r.company}
+          </span>
+          {r.source && <span class="shrink-0">{r.source}</span>}
+        </figcaption>
+      </figure>
+    ))
+  }
+</div>
+
+<style>
+  .review {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--d),
+      border-color 0.3s;
+  }
+  .review.is-in {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .review {
+      opacity: 1;
+      transform: none;
+      transition: border-color 0.3s;
+    }
+  }
+</style>
+
+<script>
+  const cards = document.querySelectorAll<HTMLElement>('[data-review]');
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-in');
+          io.unobserve(e.target);
+        }
+      }
+    },
+    { rootMargin: '0px 0px -10% 0px' },
+  );
+  cards.forEach((c) => io.observe(c));
+</script>

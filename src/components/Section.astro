@@ -1,0 +1,14 @@
+---
+interface Props {
+  title?: string;
+  index: number;
+  id?: string;
+}
+
+const { title, index, id } = Astro.props;
+---
+
+<section id={id} class="fade-in mb-16" style={`--i:${index}`}>
+  {title && <h2 class="mb-4 font-bold text-fg">{title}</h2>}
+  <slot />
+</section>

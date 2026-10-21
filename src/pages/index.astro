@@ -1,0 +1,123 @@
+---
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import Section from '../components/Section.astro';
+import Row from '../components/Row.astro';
+import Activity from '../components/Activity.astro';
+import CaseVideo from '../components/CaseVideo.astro';
+import Portrait from '../components/Portrait.astro';
+import Reviews from '../components/Reviews.astro';
+import { profile, intro, links, upwork, experience, cases, reviews, earlier, webflow } from '../data/site';
+---
+
+<Base>
+  <main class="mx-auto w-full max-w-[880px] px-4 pt-[77px] pb-16">
+    <header class="fade-in mb-20 flex items-center justify-between" style="--i:0">
+      <a href="/" aria-label="Home"><Mark /></a>
+      <p class="text-muted tabular-nums" data-clock data-tz={profile.timezone}>&nbsp;</p>
+    </header>
+
+    <Section index={1}>
+      <!-- Links sit at the bottom of the text column, level with the bottom of the photo. -->
+      <div class="flex flex-col-reverse gap-8 sm:grid sm:grid-cols-[287px_1fr] sm:gap-12">
+        <div class="flex flex-col sm:order-last">
+          <p class="text-muted">
+            <span class="text-fg">{profile.name}</span>
+            {intro.lead}
+          </p>
+          {intro.paragraphs.map((p) => <p class="mt-4 text-muted">{p}</p>)}
+          <p class="mt-4 text-muted">{intro.based}</p>
+
+          <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-1 sm:mt-auto sm:pt-6">
+            {
+              links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    target={l.href.startsWith('http') ? '_blank' : undefined}
+                    rel="noopener noreferrer"
+                    class="text-fg underline decoration-outline hover:decoration-fg"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li>
+              <a href={profile.cv} class="text-fg underline decoration-outline hover:decoration-fg" download>CV ↓</a>
+            </li>
+          </ul>
+          <p class="mt-2 text-muted">[ {upwork} ]</p>
+        </div>
+        <Portrait />
+      </div>
+    </Section>
+
+    <Section index={2} title="Experience">
+      {experience.map((e) => <Row title={e.company} subtitle={e.role} meta={e.years} />)}
+    </Section>
+
+    <Section index={3} title="Activity">
+      <p class="mb-4 text-muted">What I’ve been shipping lately, straight from GitHub.</p>
+      <Activity login={profile.github} />
+    </Section>
+
+    <Section index={4} title="Selected work" id="work">
+      {
+        cases.map((c) => (
+          <article class="mb-16 last:mb-0">
+            <p class="mb-4">
+              <span class="text-muted">{c.year}</span>
+              <span class="mx-1 text-muted">—</span>
+              <span class="text-fg">{c.title}</span>
+              <span class="text-muted"> · {c.tagline}</span>
+            </p>
+            <CaseVideo src={c.video} poster={c.poster} tint={c.tint} label={`${c.title} — ${c.tagline}`} />
+            <p class="mt-4 text-muted">{c.text}</p>
+          </article>
+        ))
+      }
+    </Section>
+
+    <Section index={5} title="Kind words" id="reviews">
+      <Reviews items={reviews} />
+    </Section>
+
+    <Section index={5} title="Earlier work">
+      {
+        earlier.map((e) => (
+          <Row title={e.title} subtitle={e.text} meta={e.year}>
+            <p class="mt-1 flex gap-4">
+              {e.links.map((l) => (
+                <a href={l.href} target="_blank" rel="noopener noreferrer" class="text-fg underline decoration-outline hover:decoration-fg">
+                  {l.label} ↗
+                </a>
+              ))}
+            </p>
+          </Row>
+        ))
+      }
+    </Section>
+
+    <Section index={6} title="Webflow builds">
+      {webflow.map((w) => <Row title={w.title} subtitle={w.text} meta="↗" href={w.href} />)}
+    </Section>
+  </main>
+
+  <footer class="border-t border-line">
+    <div class="mx-auto flex w-full max-w-[880px] items-center justify-between px-4 py-12">
+      <a href={`mailto:${profile.email}`} class="hover:underline">{profile.email}</a>
+      <span class="text-muted">© {new Date().getFullYear()}</span>
+    </div>
+  </footer>
+</Base>
+
+<script>
+  const el = document.querySelector<HTMLElement>('[data-clock]');
+  if (el) {
+    const fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: el.dataset.tz });
+    const tick = () => (el.textContent = `${fmt.format(new Date())} in Odesa`);
+    tick();
+    setInterval(tick, 30_000);
+  }
+</script>

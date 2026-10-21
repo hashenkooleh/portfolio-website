@@ -1,0 +1,30 @@
+---
+// Title + muted subtitle on the left, muted meta on the right, hairline below.
+interface Props {
+  title: string;
+  subtitle?: string;
+  meta?: string;
+  href?: string;
+}
+
+const { title, subtitle, meta, href } = Astro.props;
+const Tag = href ? 'a' : 'div';
+const external = href?.startsWith('http');
+---
+
+<Tag
+  href={href}
+  target={external ? '_blank' : undefined}
+  rel={external ? 'noopener noreferrer' : undefined}
+  class:list={[
+    'group flex items-baseline justify-between gap-6 border-b border-line py-4',
+    href && 'transition-colors hover:border-outline',
+  ]}
+>
+  <div class="min-w-0">
+    <h3 class:list={['text-fg', href && 'group-hover:underline']}>{title}</h3>
+    {subtitle && <p class="text-muted">{subtitle}</p>}
+    <slot />
+  </div>
+  {meta && <span class="shrink-0 text-muted tabular-nums">{meta}</span>}
+</Tag>

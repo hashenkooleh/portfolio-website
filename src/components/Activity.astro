@@ -1,0 +1,79 @@
+---
+import { getActivity } from '../lib/github';
+
+interface Props {
+  login: string;
+}
+
+const { login } = Astro.props;
+const activity = await getActivity(login);
+
+const shades = ['#161616', '#3a3a3a', '#6b6b6b', '#a8a8a8', '#ffffff'];
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+// Month label sits above the first week that starts in that month.
+const labels =
+  activity?.weeks.map((week, i) => {
+    const month = new Date(week[0].date).getUTCMonth();
+    const prev = i > 0 ? new Date(activity.weeks[i - 1][0].date).getUTCMonth() : -1;
+    return month !== prev && i < activity.weeks.length - 2 ? months[month] : '';
+  }) ?? [];
+
+const fmt = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+
+{
+  activity ? (
+    <div>
+      <div class="activity-scroll -mx-1 overflow-x-auto px-1 pb-2" data-activity>
+        <div class="inline-grid gap-[3px]" style={`grid-template-columns: repeat(${activity.weeks.length}, 12px)`}>
+          {labels.map((label) => (
+            <span class="h-4 overflow-visible whitespace-nowrap text-[11px] leading-4 text-muted">{label}</span>
+          ))}
+          {activity.weeks.map((week, w) => (
+            <div class="grid grid-rows-7 gap-[3px]" style={`grid-column:${w + 1}; grid-row:2`}>
+              {week.map((day) => (
+                <span
+                  class="size-[12px] rounded-[2px]"
+                  style={`background:${shades[day.level]}; grid-row:${new Date(day.date).getUTCDay() + 1}`}
+                  title={`${day.count} contribution${day.count === 1 ? '' : 's'} on ${fmt.format(new Date(day.date))}`}
+                />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="mt-3 flex items-center justify-between gap-4 text-muted">
+        <a href={`https://github.com/${login}`} target="_blank" rel="noopener noreferrer" class="hover:text-fg hover:underline">
+          {activity.total.toLocaleString('en')} contributions in the last year
+        </a>
+        <span class="flex shrink-0 items-center gap-[3px] text-[11px]" aria-hidden="true">
+          less
+          {shades.map((c) => <span class="size-[10px] rounded-[2px]" style={`background:${c}`} />)}
+          more
+        </span>
+      </div>
+    </div>
+  ) : (
+    <p class="text-muted">
+      Activity is unavailable right now —{' '}
+      <a href={`https://github.com/${login}`} class="text-fg underline">see it on GitHub</a>.
+    </p>
+  )
+}
+
+<script>
+  // On narrow screens show the most recent weeks first.
+  document.querySelectorAll<HTMLElement>('[data-activity]').forEach((el) => {
+    el.scrollLeft = el.scrollWidth;
+  });
+</script>
+
+<style>
+  .activity-scroll {
+    scrollbar-width: none;
+  }
+  .activity-scroll::-webkit-scrollbar {
+    display: none;
+  }
+</style>

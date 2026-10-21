@@ -1,0 +1,24 @@
+---
+import { Image } from 'astro:assets';
+import photo from '../assets/oleh.jpg';
+
+// Square source cropped left/right into a narrow portrait frame.
+// Width is set by the grid column in index.astro.
+const aspect = '260 / 376';
+const focus = '52% 50%'; // horizontal crop: 0% = left edge, 100% = right
+const brightness = 0.85; // 1 = original, lower = darker
+---
+
+<div class="relative aspect-(--ar) w-48 shrink-0 overflow-hidden bg-black sm:w-full" style={`--ar:${aspect}`}>
+  <Image
+    src={photo}
+    alt="Oleh in a green rain poncho in a foggy forest"
+    widths={[480, 840, 1260, 1600]}
+    sizes="(min-width: 640px) 420px, 280px"
+    loading="eager"
+    format="avif"
+    quality={85}
+    class="absolute inset-0 size-full object-cover"
+    style={`object-position:${focus}; filter:brightness(${brightness})`}
+  />
+</div>
