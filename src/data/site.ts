@@ -73,6 +73,11 @@ export const cases = [
   },
 ];
 
+// Toggle sections on/off without deleting their content.
+export const show = {
+  reviews: false,
+};
+
 // Client reviews. PLACEHOLDERS — replace with real quotes (Upwork, LinkedIn, etc.).
 // Mix short and long ones: cards size to their text.
 export const reviews = [
