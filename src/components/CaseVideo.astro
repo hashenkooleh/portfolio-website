@@ -1,5 +1,6 @@
 ---
-// Muted looping preview on a tinted backdrop. Plays only while on screen; falls back to the poster.
+// Muted looping preview on a tinted backdrop, with a glass play/pause + scrubber control.
+// Autoplays while on screen (unless the viewer paused it); falls back to the poster.
 interface Props {
   src: string;
   poster?: string;
@@ -25,7 +26,7 @@ const crop =
     : { aspect: '16 / 10', width: '100%', left: '0', top: '0' };
 ---
 
-<div class="backdrop relative overflow-hidden rounded-xl p-5 sm:p-14" style={`--tint:${tint}`}>
+<case-player class="backdrop relative block overflow-hidden rounded-xl p-5 sm:px-14 sm:pt-14 sm:pb-5" style={`--tint:${tint}`}>
   <div
     class="relative overflow-hidden rounded-[0.6rem] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.8)]"
     style={`aspect-ratio:${crop.aspect}`}
@@ -40,10 +41,26 @@ const crop =
       playsinline
       preload="metadata"
       aria-label={label}
-      data-case-video
     ></video>
   </div>
-</div>
+
+  <div class="glass relative z-10 mx-auto mt-4 flex w-full max-w-[320px] items-center gap-4 rounded-2xl p-1.5 pr-5 sm:mt-5">
+    <button
+      type="button"
+      class="grid size-9 shrink-0 place-items-center rounded-[10px] bg-white text-black transition-transform active:scale-95"
+      aria-label="Play"
+      data-toggle
+    >
+      <svg viewBox="0 0 24 24" class="size-[18px]" data-icon="play" aria-hidden="true">
+        <path d="M8 5.5v13l10.5-6.5L8 5.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"></path>
+      </svg>
+      <svg viewBox="0 0 24 24" class="hidden size-[18px]" data-icon="pause" aria-hidden="true">
+        <path d="M8.5 5.5v13M15.5 5.5v13" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"></path>
+      </svg>
+    </button>
+    <input type="range" min="0" max="1000" value="0" step="1" class="scrub" aria-label="Seek" data-scrub />
+  </div>
+</case-player>
 
 <style>
   /* Dark tinted base, a soft arc of light, film grain. */
@@ -66,23 +83,136 @@ const crop =
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
+
+  /* Frosted control: translucent, blurred, hairline light edge. */
+  .glass {
+    background: rgb(255 255 255 / 0.08);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.08),
+      0 10px 30px -10px rgb(0 0 0 / 0.6);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  /* Scrubber: white fill up to --p, faint track after it, white thumb. */
+  .scrub {
+    --p: 0%;
+    appearance: none;
+    flex: 1;
+    height: 18px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .scrub::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #fff var(--p), rgb(255 255 255 / 0.22) var(--p));
+  }
+  .scrub::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, #fff var(--p), rgb(255 255 255 / 0.22) var(--p));
+  }
+  .scrub::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+    transition: transform 0.15s;
+  }
+  .scrub::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+  }
+  .scrub:active::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
 </style>
 
 <script>
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const videos = document.querySelectorAll<HTMLVideoElement>('[data-case-video]');
 
-  if (!reduce) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const { target, isIntersecting } of entries) {
-          const video = target as HTMLVideoElement;
-          if (isIntersecting) video.play().catch(() => {});
-          else video.pause();
+  class CasePlayer extends HTMLElement {
+    connectedCallback() {
+      const video = this.querySelector('video')!;
+      const toggle = this.querySelector<HTMLButtonElement>('[data-toggle]')!;
+      const scrub = this.querySelector<HTMLInputElement>('[data-scrub]')!;
+      const play = this.querySelector('[data-icon="play"]')!;
+      const pause = this.querySelector('[data-icon="pause"]')!;
+      let userPaused = reduce; // reduced motion: start paused, the viewer decides
+      let dragging = false;
+      let wasPlaying = false;
+      let raf = 0;
+
+      const paint = () => {
+        if (!dragging && video.duration) {
+          const t = video.currentTime / video.duration;
+          scrub.value = String(Math.round(t * 1000));
+          scrub.style.setProperty('--p', `${t * 100}%`);
         }
-      },
-      { threshold: 0.25 },
-    );
-    videos.forEach((v) => io.observe(v));
+        if (!video.paused) raf = requestAnimationFrame(paint);
+      };
+
+      const sync = () => {
+        const playing = !video.paused;
+        play.classList.toggle('hidden', playing);
+        pause.classList.toggle('hidden', !playing);
+        toggle.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+        cancelAnimationFrame(raf);
+        paint();
+      };
+
+      video.addEventListener('play', sync);
+      video.addEventListener('pause', sync);
+      video.addEventListener('loadedmetadata', paint);
+      video.addEventListener('seeked', paint);
+
+      toggle.addEventListener('click', () => {
+        if (video.paused) {
+          userPaused = false;
+          video.play().catch(() => {});
+        } else {
+          userPaused = true;
+          video.pause();
+        }
+      });
+
+      scrub.addEventListener('pointerdown', () => {
+        dragging = true;
+        wasPlaying = !video.paused;
+        video.pause();
+      });
+      scrub.addEventListener('input', () => {
+        const t = Number(scrub.value) / 1000;
+        scrub.style.setProperty('--p', `${t * 100}%`);
+        if (video.duration) video.currentTime = t * video.duration;
+      });
+      const release = () => {
+        if (!dragging) return;
+        dragging = false;
+        if (wasPlaying) video.play().catch(() => {});
+      };
+      scrub.addEventListener('pointerup', release);
+      scrub.addEventListener('change', release);
+
+      // Autoplay while on screen, unless the viewer paused it.
+      new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting && !userPaused) video.play().catch(() => {});
+          else if (!entry.isIntersecting) video.pause();
+        },
+        { threshold: 0.25 },
+      ).observe(video);
+    }
   }
+
+  customElements.define('case-player', CasePlayer);
 </script>
