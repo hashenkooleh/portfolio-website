@@ -74,6 +74,8 @@ export const cases = [
     video: '/previews/prodata.mp4',
     poster: '/previews/prodata.jpg',
     tint: '#c99068', // copper
+    frame: 'full' as const, // story video rendered from portfolio-demos/prodata (Remotion)
+    aspect: '3 / 2',
   },
 ];
 
