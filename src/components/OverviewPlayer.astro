@@ -1,0 +1,72 @@
+---
+// One shared lightbox for the case walkthroughs. Links with `data-overview` open
+// the YouTube video here instead of leaving the site; it starts at RATE speed.
+// YouTube picks quality from the player's size, so the iframe is laid out at
+// 1920×1080 and scaled down to fit — that keeps it on 1080p.
+---
+
+<dialog
+  data-overview-dialog
+  class="m-auto w-[min(1100px,calc(100vw-32px))] max-w-none overflow-visible bg-transparent p-0 text-fg backdrop:bg-black/60 backdrop:backdrop-blur-md"
+>
+  <div class="mb-3 flex items-center justify-between">
+    <span data-overview-title class="text-muted"></span>
+    <button type="button" data-overview-close class="text-muted hover:text-fg" aria-label="Close">Close ✕</button>
+  </div>
+  <div data-overview-box class="relative aspect-video w-full overflow-hidden rounded-[8px] border border-line bg-black">
+    <iframe
+      data-overview-frame
+      class="absolute top-0 left-0 h-[1080px] w-[1920px] origin-top-left"
+      title="Overview video"
+      allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+      allowfullscreen></iframe>
+  </div>
+</dialog>
+
+<script>
+  const RATE = 1.5;
+  const dialog = document.querySelector<HTMLDialogElement>('[data-overview-dialog]')!;
+  const frame = dialog.querySelector<HTMLIFrameElement>('[data-overview-frame]')!;
+  const title = dialog.querySelector<HTMLElement>('[data-overview-title]')!;
+  const box = dialog.querySelector<HTMLElement>('[data-overview-box]')!;
+
+  new ResizeObserver(() => (frame.style.transform = `scale(${box.clientWidth / 1920})`)).observe(box);
+
+  const youtubeId = (url: string) => url.match(/(?:youtu\.be\/|v=|embed\/)([\w-]{11})/)?.[1];
+
+  // YouTube has no URL param for speed or quality; set them through the iframe API once the player is up.
+  let timer = 0;
+  const setRate = () => {
+    let tries = 0;
+    clearInterval(timer);
+    timer = window.setInterval(() => {
+      const send = (func: string, args: unknown[]) => frame.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*');
+      send('setPlaybackRate', [RATE]);
+      send('setPlaybackQuality', ['hd1080']);
+      if (++tries > 10) clearInterval(timer);
+    }, 500);
+  };
+  frame.addEventListener('load', setRate);
+
+  const close = () => dialog.close();
+  dialog.addEventListener('close', () => {
+    clearInterval(timer);
+    frame.src = 'about:blank';
+  });
+  dialog.querySelector('[data-overview-close]')!.addEventListener('click', close);
+  dialog.addEventListener('click', (e) => {
+    if (e.target === dialog) close();
+  });
+
+  document.querySelectorAll<HTMLAnchorElement>('a[data-overview]').forEach((a) => {
+    const id = youtubeId(a.href);
+    if (!id) return;
+    a.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return; // let modified clicks open YouTube
+      e.preventDefault();
+      title.textContent = a.dataset.overview ?? '';
+      frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&enablejsapi=1&rel=0&modestbranding=1&playsinline=1&vq=hd1080`;
+      dialog.showModal();
+    });
+  });
+</script>

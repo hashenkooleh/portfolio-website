@@ -7,6 +7,7 @@ import Activity from '../components/Activity.astro';
 import CaseVideo from '../components/CaseVideo.astro';
 import Portrait from '../components/Portrait.astro';
 import Reviews from '../components/Reviews.astro';
+import OverviewPlayer from '../components/OverviewPlayer.astro';
 import { profile, intro, links, upwork, experience, cases, reviews, earlier, webflow, show } from '../data/site';
 ---
 
@@ -74,6 +75,24 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
             </p>
             <CaseVideo src={c.video} poster={c.poster} tint={c.tint} frame={c.frame} aspect={c.aspect} label={`${c.title} — ${c.tagline}`} />
             <p class="mt-4 text-muted">{c.text}</p>
+            {c.overview === 'soon' && (
+              <span class="mt-3 inline-flex items-center gap-2 text-muted">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="shrink-0">
+                  <circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.5 2.5" />
+                  <path d="M6.5 5.5v5l4-2.5-4-2.5Z" fill="currentColor" />
+                </svg>
+                Overview video coming soon
+              </span>
+            )}
+            {c.overview && c.overview !== 'soon' && (
+              <a href={c.overview} target="_blank" rel="noopener noreferrer" data-overview={`${c.title} · Overview`} class="group mt-3 inline-flex items-center gap-2 text-fg">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" class="shrink-0">
+                  <circle cx="8" cy="8" r="7.25" stroke="currentColor" stroke-width="1.5" />
+                  <path d="M6.5 5.5v5l4-2.5-4-2.5Z" fill="currentColor" />
+                </svg>
+                <span class="underline decoration-outline group-hover:decoration-fg">Watch overview</span>
+              </a>
+            )}
           </article>
         ))
       }
@@ -101,6 +120,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
           </Row>
         ))
       }
+      <OverviewPlayer />
     </Section>
 
     <Section index={6} title="Webflow builds">

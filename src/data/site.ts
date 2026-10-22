@@ -54,6 +54,7 @@ export const cases = [
     tint: '#8fb8ad', // sage teal
     frame: 'full' as const, // concept UI from portfolio-demos/basewell (Remotion), not the client product
     aspect: '3 / 2',
+    overview: 'soon', // walkthrough not recorded yet — swap for the URL when it is
   },
   {
     year: '2025',
@@ -65,6 +66,7 @@ export const cases = [
     tint: '#9aa0e8', // periwinkle
     frame: 'full' as const, // story video rendered from portfolio-demos/bridj (Remotion)
     aspect: '3 / 2',
+    overview: 'https://youtu.be/6N-cX-2E5-g', // narrated walkthrough
   },
   {
     year: '2025',
@@ -76,6 +78,7 @@ export const cases = [
     tint: '#c99068', // copper
     frame: 'full' as const, // story video rendered from portfolio-demos/prodata (Remotion)
     aspect: '3 / 2',
+    overview: 'https://youtu.be/JchsAVbriI8', // narrated walkthrough
   },
 ];
 
