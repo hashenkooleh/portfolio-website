@@ -139,11 +139,23 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
     </Section>
   </main>
 
-  <footer class="border-t border-line">
+  <footer class="overflow-hidden border-t border-line">
     <div class="mx-auto flex w-full max-w-[880px] items-center justify-between px-4 py-12">
       <a href={`mailto:${profile.email}`} data-copy={profile.email} class="hover:underline">{profile.email}</a>
       <span class="text-muted">© {new Date().getFullYear()}</span>
     </div>
+    <!-- Engraved mountains (AI-generated illustration). Decorative only. -->
+    <img
+      src="/footer-mountains.webp"
+      srcset="/footer-mountains-1200.webp 1200w, /footer-mountains.webp 2400w"
+      sizes="100vw"
+      width="2400"
+      height="547"
+      alt=""
+      loading="lazy"
+      decoding="async"
+      class="pointer-events-none relative left-1/2 block h-auto w-full min-w-[900px] -translate-x-1/2 select-none [mask-image:linear-gradient(to_bottom,transparent,black_30%)]"
+    />
   </footer>
 
   <IntroBubble />
