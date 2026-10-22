@@ -8,6 +8,7 @@ import CaseVideo from '../components/CaseVideo.astro';
 import Portrait from '../components/Portrait.astro';
 import Reviews from '../components/Reviews.astro';
 import OverviewPlayer from '../components/OverviewPlayer.astro';
+import IntroBubble from '../components/IntroBubble.astro';
 import { profile, intro, links, upwork, experience, cases, reviews, earlier, webflow, show } from '../data/site';
 ---
 
@@ -23,8 +24,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
       <div class="flex flex-col-reverse gap-8 sm:grid sm:grid-cols-[1fr_287px] sm:gap-12">
         <div class="flex flex-col">
           <p class="text-muted">
-            <span class="text-fg">{profile.name}</span>
-            {intro.lead}
+            {intro.hello} <span class="text-fg">{profile.short}</span>{intro.lead}
           </p>
           {intro.paragraphs.map((p) => <p class="mt-4 text-muted">{p}</p>)}
           <p class="mt-4 text-muted">{intro.based}</p>
@@ -37,6 +37,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
                     href={l.href}
                     target={l.href.startsWith('http') ? '_blank' : undefined}
                     rel="noopener noreferrer"
+                    data-copy={l.href.startsWith('mailto:') ? profile.email : undefined}
                     class="text-fg underline decoration-outline hover:decoration-fg"
                   >
                     {l.label}
@@ -45,7 +46,8 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
               ))
             }
             <li>
-              <a href={profile.cv} class="text-fg underline decoration-outline hover:decoration-fg" download>CV ↓</a>
+              <a href={profile.cv} target="_blank" rel="noopener noreferrer" class="text-fg underline decoration-outline hover:decoration-fg">CV ↗</a>
+              <a href={profile.cvPdf} class="ml-1.5 text-muted hover:text-fg" download aria-label="Download CV as PDF">PDF ↓</a>
             </li>
           </ul>
           <p class="mt-2 text-muted">[ {upwork} ]</p>
@@ -130,17 +132,48 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
 
   <footer class="border-t border-line">
     <div class="mx-auto flex w-full max-w-[880px] items-center justify-between px-4 py-12">
-      <a href={`mailto:${profile.email}`} class="hover:underline">{profile.email}</a>
+      <a href={`mailto:${profile.email}`} data-copy={profile.email} class="hover:underline">{profile.email}</a>
       <span class="text-muted">© {new Date().getFullYear()}</span>
     </div>
   </footer>
+
+  <IntroBubble />
 </Base>
 
 <script>
+  // Email links copy the address instead of launching a mail app; ⌘/Ctrl-click still opens mailto.
+  document.querySelectorAll<HTMLAnchorElement>('a[data-copy]').forEach((a) => {
+    const label = a.textContent;
+    let timer = 0;
+    a.addEventListener('click', async (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      try {
+        await navigator.clipboard.writeText(a.dataset.copy!);
+      } catch {
+        location.href = a.href; // clipboard blocked — open mailto instead
+        return;
+      }
+      a.textContent = 'Copied ✓';
+      clearTimeout(timer);
+      timer = window.setTimeout(() => (a.textContent = label), 1600);
+    });
+  });
+
   const el = document.querySelector<HTMLElement>('[data-clock]');
   if (el) {
-    const fmt = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: el.dataset.tz });
-    const tick = () => (el.textContent = `${fmt.format(new Date())} in Odesa`);
+    const timeZone = el.dataset.tz;
+    const time = new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone });
+    const offset = new Intl.DateTimeFormat('en-GB', { timeZoneName: 'shortOffset', timeZone });
+    // Kyiv is EET (UTC+2) in winter and EEST (UTC+3) in summer; derive it from the live offset.
+    const zone = (d: Date) => {
+      const utc = (offset.formatToParts(d).find((p) => p.type === 'timeZoneName')?.value ?? 'GMT+2').replace('GMT', 'UTC');
+      return `${utc === 'UTC+3' ? 'EEST' : 'EET'} (${utc})`;
+    };
+    const tick = () => {
+      const now = new Date();
+      el.textContent = `${time.format(now)} ${zone(now)}`;
+    };
     tick();
     setInterval(tick, 30_000);
   }

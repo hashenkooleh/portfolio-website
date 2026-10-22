@@ -8,16 +8,19 @@ export const profile = {
   timezone: 'Europe/Kyiv',
   email: 'oleh.hashenko@gmail.com',
   github: 'hashenkooleh',
-  cv: '/Oleh_Hashenko_CV.pdf',
+  cv: 'https://drive.google.com/file/d/12PsYqNZwhpdOrAdGQmuqfHntXUix9TmL/view?usp=drive_link',
+  cvPdf: '/Oleh_Hashenko_CV.pdf',
 };
 
-// Plain-words intro. First line is muted except the name, like the reference.
+// Plain-words intro, in my own voice. The greeting line is muted except the name.
 export const intro = {
-  lead: 'is a product designer who also ships the code.',
+  hello: 'Hi, I’m',
+  lead: '. I design products, then build them — and honestly, I love every part of it.',
   paragraphs: [
-    'For ten years I’ve been making complicated B2B products feel simple — cloud consoles, data platforms, AI tools people open every morning.',
-    'These days I spend less time in Figma and more in the browser. I design with Claude Code, Cursor and a design system that lives in the repo, so nothing gets lost between the mockup and the product.',
-    'I like dense dashboards, quiet interfaces and the tiny details nobody notices until they’re missing. Off the clock: building small tools, long walks by the sea and too much coffee.',
+    'My work doesn’t stop at static screens in Figma. I cover the whole path: research and product strategy, UX and UI, all the way to real front-end code, a living design system and screens developers can actually ship.',
+    'For ten years I’ve been making complicated B2B products feel simple — cloud consoles, data platforms, AI tools people open every morning. I care about the people on the other side of the screen, so I listen, test and keep polishing until it just works for them.',
+    'These days I design with Claude Code, Cursor and a design system that lives in the repo. I learn something new every day, and I’m pretty sure this is where our craft is heading.',
+    'When I’m not pushing pixels (or commits), you’ll find me playing guitar, heading to the mountains or bouncing down a trail on my MTB — usually coming back with a couple of new UI ideas.',
   ],
   based: 'Working remotely with teams in the US, UK and Europe.',
 };
@@ -133,18 +136,6 @@ export const reviews = [
 
 export const earlier = [
   {
-    year: '2023',
-    title: 'Hotel Analyser',
-    text: 'AI review analytics for hoteliers',
-    links: [
-      { label: 'Overview', href: 'https://youtu.be/PBKSGdj6zvA' },
-      {
-        label: 'Prototype',
-        href: 'https://www.figma.com/proto/hRKsHdltN40kv5Pf8gIY2i/Hotel-Analyser---Super-User-Prototype?page-id=4080%3A112876&node-id=6375-158792&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6098%3A158139',
-      },
-    ],
-  },
-  {
     year: '2019–24',
     title: 'Pet Care ID',
     text: 'iOS & Android app, 1.2M+ users, +400% subscription revenue',
@@ -154,16 +145,28 @@ export const earlier = [
     ],
   },
   {
-    year: '2021',
+    year: '2022–24',
     title: 'Real estate platform',
     text: 'Leasing broker tool for the Asia-Pacific market',
     links: [{ label: 'Overview', href: 'https://youtu.be/3uKeSYF1HVg' }],
   },
   {
-    year: '2022',
+    year: '2023–24',
     title: 'Geomarketing platform',
     text: 'AI location planning for retail chains in 12+ countries',
     links: [{ label: 'Overview', href: 'https://youtu.be/GvG2BIFfFHM' }],
+  },
+  {
+    year: '2021–22',
+    title: 'Hotel Analyser',
+    text: 'AI review analytics for hoteliers',
+    links: [
+      { label: 'Overview', href: 'https://youtu.be/PBKSGdj6zvA' },
+      {
+        label: 'Prototype',
+        href: 'https://www.figma.com/proto/hRKsHdltN40kv5Pf8gIY2i/Hotel-Analyser---Super-User-Prototype?page-id=4080%3A112876&node-id=6375-158792&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=6098%3A158139',
+      },
+    ],
   },
 ];
 

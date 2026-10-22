@@ -1,0 +1,63 @@
+---
+// Floating vertical card, bottom-right: a muted loop cut from the intro video
+// (public/previews/intro.mp4, center-cropped to 9:16). Click opens the full
+// video in OverviewPlayer at normal speed; ✕ hides it for the session.
+const url = 'https://youtu.be/GItM0U8MTx0';
+---
+
+<div data-intro class="fixed right-4 bottom-4 z-40 translate-y-3 opacity-0 transition duration-500 sm:right-6 sm:bottom-6">
+  <a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-overview="Hi, I’m Oleh"
+    data-rate="1"
+    class="group relative block aspect-[9/16] w-24 overflow-hidden rounded-[12px] border border-line bg-black shadow-[0_8px_32px_rgb(0_0_0/0.6)] transition-transform duration-300 hover:scale-[1.04] sm:w-28"
+    aria-label="Watch my intro video"
+  >
+    <video
+      data-intro-video
+      src="/previews/intro.mp4"
+      poster="/previews/intro.jpg"
+      muted
+      loop
+      playsinline
+      preload="none"
+      class="absolute inset-0 size-full object-cover brightness-[0.85] transition group-hover:brightness-100"></video>
+    <span class="absolute inset-x-0 bottom-0 flex items-center gap-1.5 bg-gradient-to-t from-black/80 to-transparent px-2.5 pt-6 pb-2 text-[12px] leading-4 text-fg">
+      <svg width="12" height="12" viewBox="0 0 16 16" aria-hidden="true" class="shrink-0">
+        <path d="M4.5 3v10l8.5-5-8.5-5Z" fill="currentColor"></path>
+      </svg>
+      Intro
+    </span>
+  </a>
+  <button
+    type="button"
+    data-intro-close
+    class="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-full border border-line bg-black text-[11px] text-muted hover:text-fg"
+    aria-label="Hide intro video">✕</button
+  >
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-intro]');
+  const video = root?.querySelector<HTMLVideoElement>('[data-intro-video]');
+  const KEY = 'intro-hidden';
+  let hidden = false;
+  try {
+    hidden = sessionStorage.getItem(KEY) === '1';
+  } catch {}
+
+  if (root && video && !hidden) {
+    setTimeout(() => {
+      root.classList.remove('translate-y-3', 'opacity-0');
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) video.play().catch(() => {});
+    }, 1200);
+    root.querySelector('[data-intro-close]')!.addEventListener('click', () => {
+      root.remove();
+      try {
+        sessionStorage.setItem(KEY, '1');
+      } catch {}
+    });
+  } else root?.remove();
+</script>
