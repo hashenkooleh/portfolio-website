@@ -104,6 +104,14 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
       show.reviews && (
         <Section index={5} title="Kind words" id="reviews">
           <Reviews items={reviews} />
+          <a
+            href={links.find((l) => l.label === 'Upwork')!.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="relative -mt-6 inline-block text-fg underline decoration-outline hover:decoration-fg"
+          >
+            See all reviews on Upwork ↗
+          </a>
         </Section>
       )
     }
