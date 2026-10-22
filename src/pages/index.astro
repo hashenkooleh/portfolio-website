@@ -108,7 +108,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
       )
     }
 
-    <Section index={5} title="Earlier work">
+    <Section index={show.reviews ? 6 : 5} title="Earlier work">
       {
         earlier.map((e) => (
           <Row title={e.title} subtitle={e.text} meta={e.year}>
@@ -125,7 +125,7 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
       <OverviewPlayer />
     </Section>
 
-    <Section index={6} title="Webflow builds">
+    <Section index={show.reviews ? 7 : 6} title="Webflow builds">
       {webflow.map((w) => <Row title={w.title} subtitle={w.text} meta="↗" href={w.href} />)}
     </Section>
   </main>

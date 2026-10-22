@@ -12,9 +12,13 @@ interface Props {
 }
 
 const { items } = Astro.props;
+
+// "**phrase**" in a quote is lifted to full white; the rest stays muted.
+const parts = (q: string) => q.split(/\*\*(.+?)\*\*/g).map((text, i) => ({ text, hi: i % 2 === 1 }));
 ---
 
-<div class="columns-1 gap-4 sm:columns-2">
+<!-- Bottom fades into the page so it reads as "there's more below". -->
+<div class="columns-1 gap-4 [mask-image:linear-gradient(to_bottom,black_calc(100%-160px),transparent)] sm:columns-2">
   {
     items.map((r, i) => (
       <figure
@@ -22,10 +26,19 @@ const { items } = Astro.props;
         style={`--d:${(i % 2) * 90}ms`}
         data-review
       >
-        <span class="mb-4 block text-2xl leading-none text-muted" aria-hidden="true">
-          “
-        </span>
-        <blockquote class="text-fg">{r.quote}</blockquote>
+        <p class="mb-4 flex items-center gap-2 text-muted" aria-label="Rated 5 out of 5">
+          <span class="flex gap-0.5 text-fg" aria-hidden="true">
+            {Array.from({ length: 5 }, () => (
+              <svg width="14" height="14" viewBox="0 0 16 16">
+                <path d="M8 1.2l2.1 4.3 4.7.7-3.4 3.3.8 4.7L8 12l-4.2 2.2.8-4.7L1.2 6.2l4.7-.7L8 1.2Z" fill="currentColor" />
+              </svg>
+            ))}
+          </span>
+          5.0
+        </p>
+        <blockquote class="text-muted">
+          “{parts(r.quote).map((p) => (p.hi ? <span class="text-fg">{p.text}</span> : p.text))}”
+        </blockquote>
         <figcaption class="mt-6 flex items-baseline justify-between gap-4 text-muted">
           <span>
             <span class="text-fg">{r.author}</span> · {r.company}

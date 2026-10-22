@@ -87,50 +87,45 @@ export const cases = [
 
 // Toggle sections on/off without deleting their content.
 export const show = {
-  reviews: false,
+  reviews: true,
 };
 
-// Client reviews. PLACEHOLDERS — replace with real quotes (Upwork, LinkedIn, etc.).
-// Mix short and long ones: cards size to their text.
+// Client reviews, trimmed to the strongest lines (wording kept, typos fixed).
+// Wrap the phrase to highlight in **…**. All are 5.0 — no rates or totals on purpose.
 export const reviews = [
   {
     quote:
-      'Oleh doesn’t hand you a Figma file and disappear. He shipped the actual product — 200 screens, a design system, the docs site — faster than our previous team shipped mockups.',
-    author: 'Founder',
-    company: 'B2B data platform, USA',
-    source: 'Upwork',
-  },
-  {
-    quote: 'Rare mix of taste and engineering. Every detail was thought through.',
-    author: 'Head of Product',
-    company: 'SaaS, UK',
-    source: 'Upwork',
-  },
-  {
-    quote:
-      'He took a control panel as complex as AWS and made it feel calm. Our support tickets about “where is this setting” basically disappeared after the redesign.',
-    author: 'CTO',
-    company: 'Cloud provider, Central Asia',
-    source: 'LinkedIn',
-  },
-  {
-    quote: 'Clear communication, zero hand-holding needed. We extended the contract twice.',
+      'Oleh is a top-tier pro. He **transformed our complex Cloud platform into a clean, intuitive product** by simplifying difficult UX logic and data-heavy dashboards. His collaboration with our developers was flawless.',
     author: 'CEO',
-    company: 'AI startup, UK',
-    source: 'Upwork',
+    company: 'Pro-Data',
+  },
+  {
+    quote: 'Oleh is a **fantastic designer** and works with custom code solutions.',
+    author: 'CEO',
+    company: 'Openside',
   },
   {
     quote:
-      'Oleh ran user interviews, synthesised them with AI in a day and came back with prototypes in code the same week. It changed how our whole team works.',
-    author: 'VP Marketing',
-    company: 'Sales intelligence SaaS',
-    source: 'Upwork',
+      'What stood out was that **he didn’t stop at design files**. He built real frontend prototypes using AI tools, which made the handoff to developers much smoother. I’d recommend Oleh for complex SaaS, web application, or data-heavy product work.',
+    author: 'CEO',
+    company: 'LaunchLab',
   },
   {
-    quote: 'Top-tier designer. Would hire again without a second thought.',
-    author: 'Product Owner',
-    company: 'Pet care platform, USA',
-    source: 'Upwork',
+    quote:
+      'We were in the early stages of development for our software product, and Oleh **excelled in a fast-paced, dynamic environment** where product priorities were constantly changing. He delivered his work on time at a very high level of quality.',
+    author: 'Product Leader',
+    company: 'Synergist Technology',
+  },
+  {
+    quote:
+      'His attention to detail, creative thinking, and consistent collaboration have played a key role in elevating the overall design experience. His ability to **bring structure, clarity, and design maturity to complex ideas** is invaluable.',
+    author: 'Divan Gamaliel',
+    company: 'CEO, Zaphire',
+  },
+  {
+    quote: '**More than a designer** — a workflow optimization and UX/UI specialist. Also very nice to have as a manager in the team.',
+    author: 'Peter Reckers',
+    company: 'Founder, tax consultancy platform',
   },
 ];
 
