@@ -135,7 +135,7 @@ export const earlier = [
     title: 'Pet Care ID',
     text: 'iOS & Android app, 1.2M+ users, +400% subscription revenue',
     links: [
-      { label: 'Overview', href: 'https://youtu.be/tQUfrEGryZg' },
+      { label: 'Overview', href: 'https://youtu.be/GvG2BIFfFHM' },
       { label: 'App Store', href: 'https://apps.apple.com/ua/app/pet-care-id-gps-tracker/id1505139116' },
     ],
   },
@@ -143,13 +143,13 @@ export const earlier = [
     year: '2022–24',
     title: 'Real estate platform',
     text: 'Leasing broker tool for the Asia-Pacific market',
-    links: [{ label: 'Overview', href: 'https://youtu.be/3uKeSYF1HVg' }],
+    links: [{ label: 'Overview', href: 'https://youtu.be/tQUfrEGryZg' }],
   },
   {
     year: '2023–24',
     title: 'Geomarketing platform',
     text: 'AI location planning for retail chains in 12+ countries',
-    links: [{ label: 'Overview', href: 'https://youtu.be/GvG2BIFfFHM' }],
+    links: [{ label: 'Overview', href: 'https://youtu.be/3uKeSYF1HVg' }],
   },
   {
     year: '2021–22',
