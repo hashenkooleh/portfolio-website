@@ -27,20 +27,20 @@ const description = post.body.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/\
       <p class="fade-in mb-4 text-muted tabular-nums" style="--i:1"><time datetime={post.date}>{postDate(post.date, 'long')}</time></p>
       <h1 class="fade-in mb-6 font-bold text-fg" style="--i:1">{post.title}</h1>
 
-      <div class="fade-in" style="--i:2">
-        {
-          // Built as one string: whitespace-pre-line would show the newlines JSX puts around inline links.
-          paragraphs.map((p) => <p class="mb-4 whitespace-pre-line text-muted" set:html={toHtml(p)} />)
-        }
-      </div>
-
-      <div class="fade-in mt-10 grid grid-cols-2 gap-3" style="--i:3">
+      <div class="fade-in mb-10 grid grid-cols-2 gap-3" style="--i:2">
         {
           post.images.map((img) => (
             <a href={img.src} target="_blank" class="block overflow-hidden rounded-[8px] border border-line">
-              <img src={img.src} width={img.width} height={img.height} alt={img.alt} loading="lazy" decoding="async" class="block h-auto w-full" />
+              <img src={img.src} width={img.width} height={img.height} alt={img.alt} loading="eager" decoding="async" class="block h-auto w-full" />
             </a>
           ))
+        }
+      </div>
+
+      <div class="fade-in" style="--i:3">
+        {
+          // Built as one string: whitespace-pre-line would show the newlines JSX puts around inline links.
+          paragraphs.map((p) => <p class="mb-4 whitespace-pre-line text-muted" set:html={toHtml(p)} />)
         }
       </div>
 
