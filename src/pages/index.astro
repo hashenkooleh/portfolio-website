@@ -9,6 +9,8 @@ import Portrait from '../components/Portrait.astro';
 import Reviews from '../components/Reviews.astro';
 import OverviewPlayer from '../components/OverviewPlayer.astro';
 import IntroBubble from '../components/IntroBubble.astro';
+import WritingCarousel from '../components/WritingCarousel.astro';
+import { posts, postDate } from '../data/posts';
 import { profile, intro, links, upwork, experience, cases, reviews, earlier, webflow, show } from '../data/site';
 ---
 
@@ -136,6 +138,11 @@ import { profile, intro, links, upwork, experience, cases, reviews, earlier, web
 
     <Section index={show.reviews ? 7 : 6} title="Webflow builds">
       {webflow.map((w) => <Row title={w.title} subtitle={w.text} meta="↗" href={w.href} />)}
+    </Section>
+    <Section index={show.reviews ? 8 : 7} title="Writing" id="writing">
+      <p class="mb-4 text-muted">Notes on designing with AI agents, cross-posted from LinkedIn.</p>
+      <div class="mb-6"><WritingCarousel /></div>
+      {posts.map((p) => <Row title={p.title} meta={postDate(p.date)} href={`/writing/${p.slug}`} />)}
     </Section>
   </main>
 

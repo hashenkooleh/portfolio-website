@@ -13,6 +13,7 @@
 
 html {
   background: var(--color-bg);
+  overflow-x: clip; /* full-bleed strips use 100vw, which includes the scrollbar */
   color-scheme: dark;
 }
 

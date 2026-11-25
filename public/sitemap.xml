@@ -2,6 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://olehhashenko.com/</loc>
-    <lastmod>2026-10-22</lastmod>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://olehhashenko.com/writing/design-system-in-one-piece</loc>
+    <lastmod>2026-11-25</lastmod>
+  </url>
+  <url>
+    <loc>https://olehhashenko.com/writing/mobbin-mcp-competitor-research</loc>
+    <lastmod>2026-06-18</lastmod>
+  </url>
+  <url>
+    <loc>https://olehhashenko.com/writing/non-slop-ui-with-claude-code</loc>
+    <lastmod>2026-06-01</lastmod>
   </url>
 </urlset>
