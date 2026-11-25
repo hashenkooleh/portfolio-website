@@ -1,5 +1,5 @@
 ---
-// Full-bleed strip of post images drifting slowly left → right (framer.com style).
+// Strip of post images, fading out at the container edges, drifting slowly left → right (framer.com style).
 // Every image links to its post. The set is repeated so the loop never shows a gap:
 // the track holds two identical halves and slides by exactly one half.
 import { posts } from '../data/posts';
@@ -10,7 +10,7 @@ const set = [0, 1].flatMap((i) => posts.flatMap((p) => (p.images[i] ? [{ ...p.im
 const half = [...set, ...set]; // wide enough for big screens
 ---
 
-<div class="carousel relative left-1/2 w-screen -translate-x-1/2 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+<div class="carousel overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_15%,black_85%,transparent)]">
   <div class="track flex w-max">
     {
       [half, half].map((items, copy) => (
